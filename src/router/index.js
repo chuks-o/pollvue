@@ -2,8 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import CreatePoll from '@/components/CreatePoll'
-import SignUp from '@/components/Signup'
+import SignIn from '@/components/SignIn'
+import TodoList from '@/components/TodoList'
+import EmailConfirm from '@/components/EmailConfirm'
 import Auth from '@/components/Auth'
+
 import firebase from 'firebase'
 
 Vue.use(Router)
@@ -26,15 +29,25 @@ const router = new Router({
       }
     },
     {
-      path: '/signup',
-      name: 'SignUp',
-      component: SignUp
+      path: '/signin',
+      name: 'SignIn',
+      component: SignIn
     },
     {
       path: '/auth',
       name: 'Auth',
       component: Auth
-    }
+    },
+    {
+      path: '/todo',
+      name: 'TodoList',
+      component: TodoList
+    },
+    {
+      path: '/emailconfirm',
+      name: 'EmailConfirm',
+      component: EmailConfirm
+    },
   ]
 })
 
