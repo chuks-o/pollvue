@@ -14,10 +14,8 @@
               </em>
             </p>
       
-            <v-btn
-              href="/auth">
-              Get Started
-            </v-btn>
+              <v-btn to="/auth">Get Started</v-btn>
+
           </div>
         </v-flex>
       </v-layout>

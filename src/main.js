@@ -10,12 +10,12 @@ import Vuex from 'vuex'
 import { config } from './firebaseconfig'
 import 'vuetify/dist/vuetify.min.css'
 import AppAlert from './components/AppAlert'
-Vue.component('app-alert', AppAlert);
-
 import { store } from './store/pollStore'
+// 
+/* Global Components */
+Vue.component('app-alert', AppAlert);
 Vue.use(Vuetify)
-
-const axios = window.axios = Vueaxios
+/* End of globals */
 
 Vue.config.productionTip = false
 /* eslint-disable no-new */
@@ -26,14 +26,15 @@ new Vue({
   components: { App },
   template: '<App/>',
   store: store,
-
   created () {
     firebase.initializeApp(config)
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.$store.dispatch('autoSignIn', user)
-        this.$router.push('/create')
+        this.$store.dispatch('loadPolls')
+        this.$router.push('/polls')
       }
+      this.$router.push('/')
     })
   }
 })    

@@ -1,67 +1,56 @@
 <template>
-  <v-app>
-    <!-- <v-navigation-drawer app temporary v-model="sideNav">
-      <v-toolbar app>
-        <v-list class="pa-0">
-          <v-list-tile avatar>
+  <v-app id="inspire">
+    <v-navigation-drawer
+      fixed
+      v-model="drawer"
+      app>
+      <v-list dense>
+        <v-list-tile avatar v-if="userIsAuthenticated">
             <v-list-tile-avatar>
               <img src="https://randomuser.me/api/portraits/men/85.jpg" >
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title>John Leider</v-list-tile-title>
+              <v-list-tile-title>{{ user.email }}</v-list-tile-title>
             </v-list-tile-content>
-          </v-list-tile>
-
-          <v-list-tile
-            to="/">
-            <v-list-tile-action>
-              <v-icon>add</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>Home</v-list-tile-content>
-          </v-list-tile>
+        </v-list-tile>
           <v-divider></v-divider>
-          <v-list-tile
-            to="/">
-            <v-list-tile-action>
-              <v-icon>exit_to_app</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>Logout</v-list-tile-content>
-          </v-list-tile>
-        </v-list>
-      </v-toolbar>
-    </v-navigation-drawer> -->
 
-    <v-toolbar app dark color="primary">
-      <v-toolbar-side-icon
-        @click.stop="sideNav = !sideNav"
-        class="hidden-sm-and-up">
-      </v-toolbar-side-icon>
-      <v-toolbar-title class="white--text">{{ title }}</v-toolbar-title>
-      <v-spacer></v-spacer>
+        <v-list-tile v-for="menu in menuItems"
+          :key="menu.items"
+          :to="menu.link">
+          <v-list-tile-action>
+            <v-icon>{{ menu.icon }}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>{{ menu.title }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
 
-      <v-toolbar-items>
-        <v-btn icon @click="logout">
-          <v-icon>exit_to_app</v-icon>
-        </v-btn>
-      </v-toolbar-items>
+        <v-list-tile @click="logout" v-if="userIsAuthenticated">
+          <v-list-tile-action>
+            <v-icon>exit_to_app</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Logout</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-toolbar color="primary" dark fixed app>
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-title>{{ title }}</v-toolbar-title>
     </v-toolbar> 
 
     <v-content>
       <router-view/>
     </v-content>
-    
-    <v-footer app>
-      <v-container>
-            <v-layout row>
-                <v-flex text-md-center text-xs-center text-sm-center>
-                  &copy; 2018 PollVue. 
-                </v-flex>
-            </v-layout>
-      </v-container> 
-    </v-footer>
 
+    <v-footer app>
+      <span class="">&copy; 2018 PollVue</span>
+    </v-footer>
   </v-app>
-  
 </template>
 
 <script>
@@ -71,19 +60,43 @@ export default {
   data () {
     return {
       title: 'PollVue',
-      dialog: false,
-      sideNav: false
+      drawer: null
     }
   },
+
   name: 'App',
   methods: {
     logout () {
-      firebase.auth().signOut().then(() => {
-          this.$router.push('/')
-      })
-      .catch(err => {
-          console.log(err)
-      })
+      this.$store.dispatch('logout')
+    }
+  },
+
+  computed: {
+    menuItems () {
+      let menuItems =  [
+        {icon: 'home', title: 'Home', link: '/'},
+        {icon: 'face', title: 'SignUp', link: '/auth'},
+        {icon: 'lock_open', title: 'SignIn', link: '/signin'}
+
+      ]
+
+      if (this.userIsAuthenticated) {
+        menuItems = [
+          {icon: 'home', title: 'Home', link: '/'},
+          {icon: 'event', title: 'Create Poll', link: '/create'},
+          {icon: 'event', title: 'Polls', link: '/polls'},
+          {icon: 'person', title: 'Profile', link: '/profile'},
+
+        ]
+      }
+      return menuItems
+    },
+
+    userIsAuthenticated () {
+      return this.$store.getters.user != null && this.$store.getters.user != undefined
+    },
+    user () {
+      return this.$store.getters.user
     }
   }
 }

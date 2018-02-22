@@ -3,8 +3,10 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import CreatePoll from '@/components/CreatePoll'
 import SignIn from '@/components/SignIn'
-import TodoList from '@/components/TodoList'
 import EmailConfirm from '@/components/EmailConfirm'
+import Profile from '@/components/Profile'
+import Polls from '@/components/Polls'
+import Poll from '@/components/Poll'
 import Auth from '@/components/Auth'
 
 import firebase from 'firebase'
@@ -21,14 +23,6 @@ const router = new Router({
       component: Home
     },
     {
-      path: '/create',
-      name: 'CreatePoll',
-      component: CreatePoll,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
       path: '/signin',
       name: 'SignIn',
       component: SignIn
@@ -39,15 +33,42 @@ const router = new Router({
       component: Auth
     },
     {
-      path: '/todo',
-      name: 'TodoList',
-      component: TodoList
-    },
-    {
       path: '/emailconfirm',
       name: 'EmailConfirm',
       component: EmailConfirm
     },
+    {
+      path: '/create',
+      name: 'CreatePoll',
+      component: CreatePoll,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: Profile,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/polls',
+      name: 'Polls',
+      component: Polls,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/poll/:id',
+      name: 'Poll',
+      component: Poll,
+      meta: {
+        requiresAuth: true
+      }
+    }
   ]
 })
 
@@ -60,7 +81,7 @@ router.beforeEach((to, from, next) => {
     next('/auth');
   } 
   else if (!requiresAuth && currentUser) {
-    next('/create');
+    next('/polls');
   } 
   else {
     next();

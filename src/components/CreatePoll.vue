@@ -23,11 +23,14 @@
                     <v-card>
                         <v-card-text>
                             <v-layout row>
-                                <v-flex text-sm-center text-xs-center> 
-                                    <h2>Create a Poll</h2>
+                                <v-flex text-sm-center text-xs-center>
+                                    <h2>
+                                        <v-icon>event</v-icon>
+                                        Create a Poll
+                                    </h2>
                                 </v-flex>
                             </v-layout><br>
-                            <v-divider></v-divider><br>
+                            <v-divider></v-divider>
 
                             <v-container>
                                 <form @submit.prevent="createPoll">
@@ -188,7 +191,7 @@
                                                     <div>
                                                          <v-btn 
                                                             type="submit"
-                                                            large>
+                                                            :disabled=" ! formIsValid">
                                                             Create Poll
                                                         </v-btn>
                                                     </div>
@@ -205,12 +208,7 @@
                                 </form>
                             </v-container>
                         </v-card-text>
-                                    <!-- <pre>
-                                        {{ $data }}
-                                    </pre>
-                                   
-                                    <p>{{ momentnow }}</p> 
-                                    <p>{{ checkTime }}</p> -->
+                                  
                     </v-card>
                 </v-flex>
         </v-layout>
@@ -228,12 +226,10 @@ export default {
         return {
             poll: {
                 question: 'What will you be doing today?',
-
                 choices:[{
                     value: 'Choice 1',
                     cleared: true
-                }],
-                
+                }], 
             },
 
             error: '',
@@ -282,6 +278,10 @@ export default {
         endOfChoice () {
             if (this.poll.choices[3])
             return true
+        },
+
+        formIsValid () {
+            return this.poll.question != '' && this.poll.choices.length >= 2 && this.date != null && this.time != null 
         }
     },
    
@@ -324,6 +324,7 @@ export default {
                 expiration: this.getmoment
             }
             this.$store.dispatch('createPoll', newPoll)
+            this.$router.push('/polls')
         },
 
         clearChoice (choice) {
@@ -367,9 +368,9 @@ export default {
 
 <style scoped>
 h2 {
-    color: brown;
     font-weight: 100;
-    font-size: 30px;
+    font-size: 23px;
+    color: rgba(0,0,0,.54);
 }
 
 </style>

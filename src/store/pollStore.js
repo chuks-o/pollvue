@@ -17,15 +17,15 @@ export const store = new Vuex.Store({
             imageUrl: '',
             imageName: '',    
             expiration: null
-
         },
+        loadedPolls:[]
     },
 
     getters: {
         user: state => state.user,
         error: state => state.error,
         loading: state => state.loading,
-        userPoll: state => state.newPoll
+        userPolls: state => state.loadedPolls
     },
 
     mutations: {
@@ -35,7 +35,7 @@ export const store = new Vuex.Store({
         REG_USER (state, payload) {
             state.user = payload
         },
-        SIGNIN_USER (state,payload) {
+        SET_USER (state,payload) {
             state.user = payload
         },
         SET_ERROR (state, payload) {
@@ -46,10 +46,65 @@ export const store = new Vuex.Store({
         },
         CREATE_POLL (state, payload) {
             state.newPoll = payload
+        },
+        LOADED_POLLS (state, payload) {
+            state.loadedPolls = payload
         }
     },
 
     actions: {
+        loadPolls ({commit, getters}) {
+            commit('SET_LOADING', true)
+            const user = getters.user
+
+            firebase.database().ref('polls').once('value')
+            .then(data => {
+                commit('SET_LOADING', false)
+                const polls = []
+                var obj = data.val()
+
+                for (let key in obj) {
+                    if (obj[key].userId == user.id ) {
+                        polls.push({
+                            question: obj[key].question,
+                            choices: obj[key].choices,
+                            date: obj[key].date,
+                            time: obj[key].time,
+                            imageUrl: obj[key].imageUrl,
+                            imageName: obj[key].imageName,
+                            expiration: obj[key].expiration,
+                            userId: obj[key].userId
+                        })
+                    } 
+                }
+                commit('LOADED_POLLS', polls)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        },
+
+        createPoll({ commit, getters }, payload) {
+            const newPoll = {
+                question: payload.question,
+                choices: payload.choices,
+                date: payload.date,
+                time: payload.time,
+                imageUrl: payload.imageUrl,
+                imageName: payload.imageName,
+                expiration: payload.expiration.toISOString(),
+                userId: getters.user.id
+            }
+            firebase.database().ref('polls').push(newPoll)
+                .then((data) => {
+                    const key = data.key
+                    commit('CREATE_POLL', { newPoll, id: key })
+                }).catch(error => {
+                    console.log(error)
+                })
+            // console.log(newPoll)
+        },
+
         registerUser ({commit}, payload) {
             commit('SET_LOADING', true)
             commit('CLEAR_ERROR')
@@ -57,15 +112,12 @@ export const store = new Vuex.Store({
             .then(user => {
                 const newUser = {
                     id: user.uid,
-                    email: user.email
+                    email: user.email,
+                    polls: []
+
                 }
                 commit('REG_USER', newUser)  
             })
-            // .then(user => {
-            //     var user = firebase.auth().currentUser;
-            //         const newLocal = user.sendEmailVerification()
-            //         return newLocal
-            // })
             .catch(error => {
                 commit('SET_LOADING', false)
                 commit('SET_ERROR', error)
@@ -75,8 +127,9 @@ export const store = new Vuex.Store({
         autoSignIn ({commit}, payload) {
             const newUser = {
                 id: payload.uid,
+                email: payload.email
             }
-            commit('SIGNIN_USER', newUser)
+            commit('SET_USER', newUser)
         },
 
         SignInUser ({commit}, payload) {
@@ -87,31 +140,26 @@ export const store = new Vuex.Store({
                 commit('SET_LOADING', false)
                 const newUser = {
                     id: user.uid,
-                    email: user.email
+                    email: user.email,
+                    polls: []
                 }
-                commit('SIGNIN_USER', newUser)
+                commit('SET_USER', newUser)
             })
             .catch(error => {
                 commit('SET_LOADING', false)
                 commit('SET_ERROR', error)
             })
         },
+
         clearError ({commit}, payload) {
             commit('CLEAR_ERROR')
         },
 
-        createPoll ({commit}, payload) {
-            const newPoll = {
-                question: payload.question,
-                choices: payload.choices,
-                date: payload.date,
-                time: payload.time,
-                imageUrl: payload.imageUrl,
-                imageName: payload.imageName,
-                expiration: payload.expiration              
-            }
-            commit('CREATE_POLL', newPoll)
-            console.log(newPoll)
-        }
+        logout ({commit}) {
+            firebase.auth().signOut()
+            commit('SET_USER', null)
+            commit('LOADED_POLLS', null)
+        },
+
     },
 })
