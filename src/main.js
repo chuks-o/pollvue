@@ -6,36 +6,36 @@ import router from './router'
 import * as firebase from 'firebase'
 import Vuetify from 'vuetify'
 import Vueaxios from 'axios'
-import Vuex from 'vuex'
+import Vuex from 'vuex'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 import { config } from './firebaseconfig'
 import 'vuetify/dist/vuetify.min.css'
 import AppAlert from './components/AppAlert'
 import { store } from './store/pollStore'
-// 
+import BounceLoader from 'vue-spinner/src/BounceLoader.vue'
+
 /* Global Components */
-Vue.component('app-alert', AppAlert);
 Vue.use(Vuetify)
+Vue.component('app-alert', AppAlert);
+Vue.component('bounce-loader', BounceLoader);
 /* End of globals */
 
 Vue.config.productionTip = false
 /* eslint-disable no-new */
 
-new Vue({
-  el: '#app',
-  router,
-  components: { App },
-  template: '<App/>',
-  store: store,
-  created () {
-    firebase.initializeApp(config)
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.$store.dispatch('autoSignIn', user)
-        this.$store.dispatch('loadPolls')
-        this.$router.push('/polls')
+firebase.initializeApp(config)
+const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+    new Vue({
+      el: '#app',
+      router,
+      components: { App },
+      template: '<App/>',
+      store,
+      created() {
+        if (user) {
+          store.dispatch('autoSignIn', user)
+        }
       }
-      this.$router.push('/')
     })
-  }
-})    
+    unsubscribe()
+  })
 

@@ -23,13 +23,13 @@
                     <v-card>
                         <v-card-text>
                             <v-layout row>
-                                <v-flex text-sm-center text-xs-center>
+                                <v-flex text-sm-center text-xs-center mb-3>
                                     <h2>
                                         <v-icon>event</v-icon>
                                         Create a Poll
                                     </h2>
                                 </v-flex>
-                            </v-layout><br>
+                            </v-layout>
                             <v-divider></v-divider>
 
                             <v-container>
@@ -42,6 +42,7 @@
                                                         name="question"
                                                         label="Question"
                                                         id="question"
+                                                        placeholder="Which of these is your best pet?"
                                                         v-model="poll.question"
                                                         type="text"
                                                         multi-line
@@ -65,6 +66,7 @@
                                                         name="choice"
                                                         label="Choice"
                                                         id="choice1"
+                                                        placeholder="Choice"
                                                         v-model="choice.value"
                                                         type="text"
                                                         multi-line
@@ -82,7 +84,7 @@
                                             </v-layout>
                                         </v-flex>
                                     </v-layout>
-                                    
+
                                     <v-layout row v-show="!endOfChoice">
                                         <v-flex xs12>
                                             <v-layout row>
@@ -101,7 +103,11 @@
                                     <v-layout row>
                                         <v-flex class=" xs11 sm11 text-xs-center text-sm-center text-md-center text-lg-center">
                                             <img :src="imageUrl" height="170" v-if="imageUrl"/>
-                                            <v-text-field label="Select Image" @click='pickFile' v-model='imageName' prepend-icon='attach_file'></v-text-field>
+                                            <v-text-field label="Select Image" 
+                                                @click='pickFile' 
+                                                v-model='imageName' 
+                                                prepend-icon='attach_file'>
+                                            </v-text-field>
                                             <input
                                                 type="file"
                                                 style="display: none"
@@ -225,10 +231,11 @@ export default {
     data () {
         return {
             poll: {
-                question: 'What will you be doing today?',
+                question: '',
                 choices:[{
-                    value: 'Choice 1',
-                    cleared: true
+                    value: '',
+                    cleared: true,
+                    count: 0
                 }], 
             },
 
@@ -310,7 +317,7 @@ export default {
         },
         
         addChoice () {
-            this.poll.choices.push({ value: '', cleared: true });
+            this.poll.choices.push({ value: '', cleared: true, count: 0 });
         },
         
         createPoll () {
@@ -368,9 +375,9 @@ export default {
 
 <style scoped>
 h2 {
-    font-weight: 100;
-    font-size: 23px;
-    color: rgba(0,0,0,.54);
+    font-weight: 700;
+    font-size: 20px;
+    color: #5b5c5d;
 }
 
 </style>

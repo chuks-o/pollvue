@@ -20,6 +20,17 @@
                             <v-container>
                                 <v-layout row>
                                     <v-flex text-sm-center text-xs-center>
+                                        <v-btn
+                                            id="twitter-btn"
+                                            @click="twitterSignin"
+                                            dark>
+                                            <v-icon>fa-twitter</v-icon>
+                                            &nbsp; Sign In with Twitter
+                                        </v-btn>
+                                    </v-flex>
+                                </v-layout><br>
+                                <v-layout row>
+                                    <v-flex text-sm-center text-xs-center>
                                         <v-icon>lock_open</v-icon>
                                         <h1>LOGIN</h1>
                                     </v-flex>
@@ -119,15 +130,17 @@ export default {
                 email: this.email,
                 password: this.password,
                 loading: this.loading 
-
             })
         },
         onDismissed () {
             this.$store.dispatch('clearError')
-        }
+        },
+
+        twitterSignin () {
+            this.$store.dispatch('twitterSignin')
+        },
     }
 
-  
 }
 </script>
 
@@ -136,6 +149,9 @@ h1 {
     color: brown;
     font-weight: 100;
     font-size: 30px;
+}
+#twitter-btn {
+    background: #1dcaff;
 }
 
 </style>

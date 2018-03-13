@@ -15,16 +15,6 @@
                                 <form @submit.prevent="SignUp">
                                     <v-layout row>
                                         <v-flex xs12>
-                                            <v-layout row>
-                                                <v-flex text-sm-center text-xs-center>
-                                                    <v-btn
-                                                        id="twitter-btn"
-                                                        @click="signin">
-                                                        <v-icon>fa-twitter</v-icon>
-                                                        &nbsp; Sign Up with Twitter
-                                                    </v-btn>
-                                                </v-flex>
-                                            </v-layout><br>
                                             
                                             <v-text-field
                                                 name="email"
@@ -136,34 +126,15 @@ export default {
             
         },
 
-        signin () {
-            var provider = new firebase.auth.TwitterAuthProvider();
-            firebase.auth().signInWithRedirect(provider);
-
-            firebase.auth().getRedirectResult().then(result => {
-                return result
-                
-            }).then(result => {
-                console.log(result)
-                this.$router.push('/create')
-            }).catch(err => {
-                this.error = err
-            });
-        },
         onDismissed () {
             this.$store.dispatch('clearError')
             console.log('error displayed')
         }
     }
 
-  
 }
 </script>
 
 <style scoped>
-#twitter-btn {
-    background: #1dcaff;
-    color:white;
-}
 
 </style>
