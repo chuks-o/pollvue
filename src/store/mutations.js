@@ -1,4 +1,7 @@
 export const mutations = {
+    SET_LAYOUT (state, payload) {
+        state.layout = payload
+    },
     SET_LOADING(state, payload) {
         state.loading = payload
     },

@@ -291,8 +291,14 @@ export default {
             return this.poll.question != '' && this.poll.choices.length >= 2 && this.date != null && this.time != null 
         }
     },
+    beforeMount () {
+        this.setLayout()
+    },
    
     methods: {
+        setLayout () {
+            this.$store.commit('SET_LAYOUT', 'app-layout')
+        },
         pickFile () {
             this.$refs.image.click()
         },

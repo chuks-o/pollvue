@@ -6,40 +6,40 @@
             </v-flex>
         </v-layout>
      
-    <v-layout row mb-3>
-        <v-flex xs12 sm6 offset-sm3>
-            <v-card>
-                <v-card-media :src="poll.imageUrl" 
-                    :height="poll.imageUrl ? '250px': ''">
-                </v-card-media>
-        
-                <v-card-title primary-title>
-                    <div>
-                        <h3 class=" mb-0 poll-question" >
-                            {{ poll.question }}
-                        </h3>
-                    </div>
-                        <v-spacer></v-spacer>
-                    <div>
-                        <!-- Twitter share button -->
-                        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" 
-                            class="twitter-share-button" 
-                            data-size="large" 
-                            data-text="Hey, I have just created a poll on PollVue, You can join this poll now by clicking on this link." 
-                            data-hashtags="PollVue" data-related="" data-show-count="false">
-                            Tweet
-                        </a>
-                    </div>
-                </v-card-title>
-                <v-divider></v-divider>
-
-                <!-- Voting component -->
-                <voting :id="id"></voting>
-                <!-- End of Voting Component -->
-            </v-card>
+        <v-layout row mb-3>
+            <v-flex xs12 sm6 offset-sm3>
+                <v-card>
+                    <v-card-media :src="poll.imageUrl" 
+                        :height="poll.imageUrl ? '250px': ''">
+                    </v-card-media>
             
-        </v-flex>
-    </v-layout>
+                    <v-card-title primary-title>
+                        <div>
+                            <h3 class=" mb-0 poll-question" >
+                                {{ poll.question }}
+                            </h3>
+                        </div>
+                            <v-spacer></v-spacer>
+                        <div>
+                            <!-- Twitter share button -->
+                            <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" 
+                                class="twitter-share-button" 
+                                data-size="large" 
+                                data-text="Hey, I have just created a poll on PollVue, You can join this poll now by clicking on this link." 
+                                data-hashtags="PollVue" data-related="" data-show-count="false">
+                                Tweet
+                            </a>
+                        </div>
+                    </v-card-title>
+                    <v-divider></v-divider>
+
+                    <!-- Voting component -->
+                    <voting :id="id" :poll="poll"></voting>
+                    <!-- Voting Component -->
+                </v-card>
+                
+            </v-flex>
+        </v-layout>
     </v-container>
 </template>
 
@@ -58,6 +58,8 @@ export default {
         }
     },
     created () {
+        this.getPoll()
+        // Twitter share button
         let twitter = document.createElement('script');    
         twitter.setAttribute('src',"https://platform.twitter.com/widgets.js");
         twitter.setAttribute('charset',"utf-8")
@@ -74,12 +76,20 @@ export default {
                 return (this.height = 0);
             } 
             else return this.height;    
-        },
-
-        getPoll () {
-            this.$store.dispatch()
         }
-      
+    },
+    
+    beforeMount () {
+        this.setLayout()
+    },
+
+    methods: {
+        setLayout () {
+            this.$store.commit('SET_LAYOUT', 'app-layout')
+        },
+        getPoll () {
+            this.$store.dispatch('loadPoll', this.id)
+        }
     }
   
 }

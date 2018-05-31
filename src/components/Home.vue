@@ -7,20 +7,32 @@
               <h1>PollVue</h1> 
               <h4><span> &copy;</span></h4>
             </div>
-
             <p>
               <em>
                 Make a poll and let your friends decide...
               </em>
             </p>
-      
-              <v-btn to="/auth">Get Started</v-btn>
-
+              <v-btn to="/signin">Get Started</v-btn>
           </div>
         </v-flex>
       </v-layout>
     </v-container>
 </template>
+
+<script>
+export default {
+  beforeMount () {
+    this.setLayout()
+  },
+
+  methods: {
+    setLayout () {
+      this.$store.commit('SET_LAYOUT', 'simple-layout')
+    }
+  }
+}
+</script>
+
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>

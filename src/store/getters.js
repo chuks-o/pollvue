@@ -1,4 +1,5 @@
 export const getters = {
+    layout: state => state.layout,
     error: state => state.error,
     loading: state => state.loading,
 

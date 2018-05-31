@@ -4,8 +4,10 @@
             <v-spacer></v-spacer>
             19 hours left
         </v-subheader>
-        <!-- <p>{{ pollIndex }}</p> -->
-        <v-list-tile v-for="choice in poll.choices" 
+
+        <!-- Show Vote boxes ready to vote -->
+        <v-list-tile v-for="choice in poll.choices"
+            v-show="changeInterface" 
             :key="choice.value">
             <v-btn icon ripple>
                 <v-icon color="grey lighten-1">info</v-icon>
@@ -19,56 +21,99 @@
             <v-list-tile-action>
                 <span>
                     <v-btn icon ripple
+                        v-show="changeInterface"
                         @click="countChoice(choice)">
-                        <v-icon color="grey lighten-1" :disabled="!counter">favorite</v-icon>
+                        <v-icon color="grey lighten-1"  
+                            :disabled="!counter">favorite
+                        </v-icon>
                     </v-btn>
-                    {{ choice.count }}
                 </span>
             </v-list-tile-action>
-        </v-list-tile>
-        <!-- {{ pollChoices }} -->
-        <p>{{ selChoice }} </p>
+        </v-list-tile > 
+
+            <!-- Show voting results after click --> 
+        <div v-if="! changeInterface">
+            <v-list-tile v-for="choice in poll.choices"
+                :key="choice.value">
+                <v-btn icon ripple>
+                    <v-icon color="grey lighten-1">info</v-icon>
+                </v-btn>
+                <v-list-tile-content>
+                    <v-list-tile-title>
+                        {{ choice.value }}</v-list-tile-title>
+                    <v-list-tile-sub-title>{{ choice.count }} vote(s)</v-list-tile-sub-title>
+                </v-list-tile-content>
+
+                <v-list-tile-action>
+                    <span>
+                        <v-btn icon ripple
+                            v-show="changeInterface"
+                            @click="countChoice(choice)">
+                            <v-icon color="grey lighten-1"  
+                                :disabled="!counter">favorite
+                            </v-icon>
+                        </v-btn>
+                    </span>
+                    <p>{{ (choice.count / voteSum * 100).toFixed(1) }} %</p>
+                </v-list-tile-action>
+            </v-list-tile > 
+
+            <v-flex text-xs-center>
+                <p>{{ voteSum }} responses so far</p>
+            </v-flex>
+        </div>
     </v-list>
 </template>
 
 
 <script>
 export default {
-    props: ['id'],
+    props: ['id', 'poll'],
     data () {
         return {
+            activeClass: false,
             counter: true,
-            selChoice: ''
+            changeInterface: true,
+            totalVotes: 0,
+            voted: false
         }
     },
+    
     computed: {
-        poll () {
-            return this.$store.getters.loadPoll(this.id)
-        },
-        pollChoices () {
-            return this.$store.getters.loadPoll(this.id).choices
-        },
-        oneChoice () {
-            return this.pollChoices.indexOf(choice)
+        voteSum () {
+            if (this.poll) {
+                for (var i = 0; i < this.poll.choices.length; i++) {
+                    this.totalVotes += parseInt(this.poll.choices[i].count)
+                }
+                return this.totalVotes
+            }
         }
-        // pollIndex () {
-        //     this.pollArr = this.poll
-        //         var value = this.pollArr.choices.forEach((choice) => {
-        //             choice[0].value
-        //         })
-        //         return value
-        // }
     },
+
     methods: {
         countChoice (selected) {
-            selected.count += 1
+            let currentCount = parseInt(selected.count)
+            var newCount = currentCount += 1
+            let selectedIndex = this.poll.choices.indexOf(selected)
             let payload = {
                 id: this.id,
-                count: selected.count
+                selected: selectedIndex,
+                count: newCount
             }
-            this.$store.dispatch('updateCount', payload)
+            this.$store.dispatch('updateCount', payload).then(res => {
+                return this.$router.replace({ name: 'Poll', query: { id: this.id }})
+            }).then(() => {
+                this.changeInterface = false
+            })
         }
     }
-  
 }
 </script>
+
+<style scoped>
+.isActive{
+    color:red;
+}
+
+</style>
+

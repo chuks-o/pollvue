@@ -9,7 +9,6 @@ function resolve (dir) {
 }
 
 
-
 module.exports = {
   context: path.resolve(__dirname, '../'),
   entry: {
@@ -37,7 +36,7 @@ module.exports = {
         options: vueLoaderConfig
       },
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         loader: 'babel-loader',
         include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
       },
@@ -79,4 +78,11 @@ module.exports = {
     tls: 'empty',
     child_process: 'empty'
   }
+}
+
+if (process.env.NODE_ENV === 'test') {
+  // exclude NPM deps from test bundle
+  module.exports.externals = [require('webpack-node-externals')()]
+  // use inline source map so that it works with mocha-webpack
+  module.exports.devtool = 'inline-cheap-module-source-map'
 }

@@ -34,10 +34,10 @@ export const actions =  {
     },
 
     loadPoll({ commit }, id) {
-        firebase.database().ref('polls/' + id).once('value').then(data => {
+        firebase.database().ref('polls/' + id).on('value', function(data) {
             var obj = data.val()
             console.log(obj)
-            commit('POLL', obj)
+            commit('POLL', obj)   
         })
     },
 
@@ -63,8 +63,9 @@ export const actions =  {
     },
 
     updateCount({ commit }, payload) {
-        let count = payload.count += 1
-        firebase.database().ref()
+        let count = payload.count
+        let countIndex = payload.selected
+        firebase.database().ref(`polls/${payload.id}`).child('choices').child(countIndex).child('count').set(count)
     },
 
     registerUser({ commit }, payload) {
@@ -122,7 +123,7 @@ export const actions =  {
                 // You can use these server side with your app's credentials to access the Twitter API.
                 var token = result.credential.accessToken;
                 var secret = result.credential.secret;
-            commit('SET_TOKEN', token)
+                commit('SET_TOKEN', token)
                 // ...
             }
             // The signed-in user info.

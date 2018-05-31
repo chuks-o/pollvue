@@ -8,11 +8,6 @@
             </v-flex>
         </v-layout>
 
-        <!-- <v-layout row v-show="loading">
-            <v-flex text-xs-center text-sm-center>
-                <h2>loading...</h2>
-            </v-flex>
-        </v-layout> -->
             <v-layout row>
                 <v-flex xs12 sm6 offset-sm3>
                     <v-card>
@@ -72,15 +67,6 @@
                                         </v-flex>
                                     </v-layout>
                                 </form><br><br>
-
-                                <v-layout row>
-                                    <v-flex text-xs-center text-sm-center>
-                                        <router-link to="/auth">
-                                            <p>Create an account with us, IT'S FREE!</p>
-                                        </router-link>
-                                    </v-flex>
-                                </v-layout>
-    
                             </v-container>
                         </v-card-text>
                     </v-card>
@@ -123,8 +109,14 @@ export default {
             }
         }
     },
+    beforeMount () {
+        this.setLayout()
+    },
 
     methods: {
+        setLayout () {
+            this.$store.commit('SET_LAYOUT', 'simple-layout')
+        },
         SignIn () {
             this.$store.dispatch('SignInUser', { 
                 email: this.email,

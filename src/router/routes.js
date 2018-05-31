@@ -2,10 +2,8 @@ import Home from '@/components/Home'
 import CreatePoll from '@/components/CreatePoll'
 import SignIn from '@/components/SignIn'
 import EmailConfirm from '@/components/EmailConfirm'
-import Profile from '@/components/Profile'
 import Polls from '@/components/Polls'
 import Poll from '@/components/Poll'
-import Auth from '@/components/Auth'
 import JoinPoll from '@/components/JoinPoll'
 
 export default [
@@ -18,11 +16,6 @@ export default [
         path: '/signin',
         name: 'SignIn',
         component: SignIn
-    },
-    {
-        path: '/auth',
-        name: 'Auth',
-        component: Auth
     },
     {
         path: '/emailconfirm',
@@ -38,14 +31,6 @@ export default [
         }
     },
     {
-        path: '/profile',
-        name: 'Profile',
-        component: Profile,
-        meta: {
-            requiresAuth: true
-        }
-    },
-    {
         path: '/polls',
         name: 'Polls',
         component: Polls,
@@ -54,21 +39,21 @@ export default [
         }
     },
     {
-        path: '/poll/:id',
+        path: '/poll',
         name: 'Poll',
         component: Poll,
-        props: true,
+        props: (route) => ({
+            id: route.query.id,
+        }),
         meta: {
             requiresAuth: true
         }
     },
     {
-        path: '/join',
+        path: '/join/:id',
+        props: true,
         name: 'JoinPoll',
-        component: JoinPoll,   
-        meta: {
-            requiresAuth: true
-        }     
+        component: JoinPoll,       
     }
 ]
 
